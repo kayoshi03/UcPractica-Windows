@@ -1,0 +1,13 @@
+button {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  font-size: 14px;
+  background: gray;
+  //-webkit-box-shadow: 4px 4px 2px 2px black;
+  //-moz-box-shadow: 4px 4px 2px 2px black;
+  box-shadow: 2px 2px 2px 1px black;
+  border-top: 3px white solid;
+  border-left: 3px white solid;
+  margin-left: 2px;
+}
