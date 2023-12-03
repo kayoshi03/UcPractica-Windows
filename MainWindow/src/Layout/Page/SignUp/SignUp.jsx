@@ -1,4 +1,4 @@
-const SignUp = () => {
+const SignUp = ({sign}) => {
     return(
         <>
         </>

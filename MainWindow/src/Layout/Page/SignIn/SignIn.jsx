@@ -1,12 +1,20 @@
-const SignIn = () => {
+import "./style.scss"
+const SignIn = ({sign}) => {
     return(
-        <>
-            <h1>Авторизаци</h1>
-            <p>Логин</p>
-            <input/>
-            <p>Пароль</p>
-            <input/>
-        </>
+        <div className="form">
+            <form>
+                <h1>Авторизаци</h1>
+
+                <div className="login">
+                    <p>Логин</p>
+                    <input/>
+                    <p>Пароль</p>
+                    <input/>
+                </div>
+                <button>Зайти</button>
+            </form>
+        </div>
+
     )
 };
 
