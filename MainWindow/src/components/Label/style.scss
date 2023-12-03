@@ -1,0 +1,33 @@
+.label {
+  padding: 10px;
+  max-width: min-content;
+  width: max-content;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 5px;
+
+  cursor: pointer;
+
+  text-decoration: none;
+  img {
+    width: 50px;
+    height: 50px;
+
+    object-fit: cover;
+  }
+
+  p {
+    text-decoration: none;
+    color: black;
+    font-size: 12px;
+  }
+
+}
+.label:hover {
+
+    background: rgba(0, 0,0 ,0.8);
+ }
+

@@ -1,0 +1,26 @@
+.modalWin {
+  position: absolute;
+  display: block;
+
+  width: 200px;
+  height: 500px;
+  background: grey;
+
+  //box-shadow: 2px 1px 2px 0px black;
+  border-top: 2px white ridge;
+  border-left: 2px white ridge;
+  border-right: 3px black ridge;
+  bottom: 38px;
+
+  z-index: 1;
+
+  ul {
+    li{
+      cursor: pointer;
+    }
+    :hover {
+      background: #676767;
+    }
+  }
+}
+
