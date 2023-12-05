@@ -1,16 +1,17 @@
 import "./style.scss"
 import {useNavigate} from "react-router";
 import {useEffect} from "react";
+import {signin} from "../../../lib/utils/signin";
 const SignIn = ({user, sign}) => {
     const nav = useNavigate()
     const signIn = (e) => {
         const data = new FormData(e.target)
+        const name = data.get("name")
         e.preventDefault()
-        sign({...user, name:data.get("name"), auth: true})
-        localStorage.setItem("user", data.get("name"))
-        localStorage.setItem("auth", true)
+        signin(user, sign, name)
         nav("/")
     }
+
     useEffect(() => {
         if (user.auth) {
             nav("/")
