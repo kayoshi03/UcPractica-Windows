@@ -8,8 +8,11 @@ import SignUp from "./Layout/Page/SignUp/SignUp";
 
 const name = localStorage.getItem("name")
 const auth = localStorage.getItem("auth")
+console.log(name)
 const App = () => {
     const [user, setUser] = useState(auth === "true" ? {name:name, auth: auth} : {name: "", auth: false} );
+
+    console.log(user)
 
     return (
         <>

@@ -5,15 +5,15 @@ import {Tooltip} from "react-tooltip";
 import ToolTip from "../ToolTip/ToolTip";
 
 
-const Label = () => {
+const Label = ({item}) => {
     return(
         <>
-            <Link to="/" className="label my-anchor-element">
+            <Link target="_blank" to={item.link} className={`label my-anchor-element${item.id}`}>
                 <img src={test} alt=""/>
-                <p>Название приложения</p>
+                <p>{item.name}</p>
             </Link>
-            <Tooltip anchorSelect=".my-anchor-element">
-                <ToolTip/>
+            <Tooltip anchorSelect={`.my-anchor-element${item.id}`}>
+                <ToolTip time={item.time} achiv={item.achivment}/>
             </Tooltip>
         </>
 

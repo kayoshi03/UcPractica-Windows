@@ -1,9 +1,11 @@
 import React from 'react';
 
-const ToolTip = () => {
+const ToolTip = ({time, achiv}) => {
     return(
         <>
-            <h1> вадим уебок </h1>
+            <h1>Статистика</h1>
+            <p>Время:{time}</p>
+            <p>Достижения: {achiv}</p>
         </>
     )
 };
