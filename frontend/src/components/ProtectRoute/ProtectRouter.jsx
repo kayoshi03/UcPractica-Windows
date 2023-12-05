@@ -5,7 +5,7 @@ const ProtectRouter = ({user, children}) => {
     const nav = useNavigate()
 
     useEffect(() => {
-        if(!user) {
+        if(!user.auth) {
             nav("/signin")
         }
     })

@@ -3,7 +3,7 @@ import Button from "../components/Button/Button";
 import Time from "../components/Time/Time";
 import ModalWin from "../components/ModalWin/ModalWin";
 import {useState} from "react";
-const Layout = () => {
+const Layout = ({user, userChange}) => {
     const [show, setShow] = useState(false)
 
 
@@ -14,7 +14,7 @@ const Layout = () => {
             </main>
             <footer>
                 <Button state={show} click={setShow}/>
-                <ModalWin show={show}/>
+                <ModalWin user={user} change={userChange} show={show}/>
                 <Time/>
             </footer>
         </>

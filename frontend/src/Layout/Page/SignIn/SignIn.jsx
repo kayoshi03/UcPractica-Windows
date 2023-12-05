@@ -1,13 +1,28 @@
 import "./style.scss"
-const SignIn = ({sign}) => {
+import {useNavigate} from "react-router";
+import {useEffect} from "react";
+const SignIn = ({user, sign}) => {
+    const nav = useNavigate()
+    const signIn = (e) => {
+        const data = new FormData(e.target)
+        e.preventDefault()
+        sign({...user, name:data.get("name"), auth: true})
+        nav("/")
+    }
+    useEffect(() => {
+        if (user.auth) {
+            nav("/")
+        }
+    })
+
     return(
         <div className="form">
-            <form>
+            <form onSubmit={signIn}>
                 <h1>Авторизаци</h1>
 
                 <div className="login">
                     <p>Логин</p>
-                    <input/>
+                    <input name="name"/>
                     <p>Пароль</p>
                     <input/>
                 </div>

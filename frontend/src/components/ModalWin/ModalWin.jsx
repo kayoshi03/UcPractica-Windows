@@ -1,16 +1,17 @@
 import React from 'react';
 import "./style.scss"
+import {logout} from "../../lib/utils/logout";
 
-const ModalWin = ({show}) => {
+const ModalWin = ({show, user, change}) => {
+
     return (
         show ?
             <div className="modalWin">
                 <ul>
-                    <li>asd</li>
-                    <li>das</li>
-                    <li>afs</li>
-                    <li>zcx</li>
+                    <div>Пользователь:{user.name}</div>
+                    <li onClick={() => logout(user, change)}>Выйти</li>
                 </ul>
+
             </div>
                 :
             <></>
