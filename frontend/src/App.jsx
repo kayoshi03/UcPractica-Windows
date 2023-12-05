@@ -6,9 +6,10 @@ import {useState} from "react";
 import Home from "./Layout/Page/Home/Home";
 import SignUp from "./Layout/Page/SignUp/SignUp";
 
-
+const name = localStorage.getItem("name")
+const auth = localStorage.getItem("auth")
 const App = () => {
-    const [user, setUser] = useState({name: "", auth: true});
+    const [user, setUser] = useState(auth ? {name:name, auth: auth} : {name: "", auth: false} );
 
     return (
         <>

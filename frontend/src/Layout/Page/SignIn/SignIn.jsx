@@ -7,6 +7,8 @@ const SignIn = ({user, sign}) => {
         const data = new FormData(e.target)
         e.preventDefault()
         sign({...user, name:data.get("name"), auth: true})
+        localStorage.setItem("user", data.get("name"))
+        localStorage.setItem("auth", true)
         nav("/")
     }
     useEffect(() => {
