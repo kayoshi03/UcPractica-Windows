@@ -1,5 +1,9 @@
-uvicorn
-fastapi
-psycopg2-binary
+PyJWT
+psycopg2
 sqlalchemy
-requests
+pymysql
+fastapi
+uvicorn
+alembic
+python-multipart
+Pillow
