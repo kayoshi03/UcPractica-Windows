@@ -22,6 +22,19 @@ main {
   width: 100%;
   height: 100%;
   background: #008081;
+  .items {
+    display: flex;
+  }
+  .item {
+    width: 50px;
+    height: 50px;
+    background: black;
+  }
+  .Board {
+    width: 200px;
+    height: 200px;
+    background: rgba(0,0,0, 0.5);
+  }
 }
 
 footer {
@@ -37,3 +50,4 @@ footer {
   border-top: 5px  #b0b0b0 ridge;
   z-index: 999;
 }
+
