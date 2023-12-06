@@ -7,8 +7,9 @@ const SignIn = ({user, sign}) => {
     const signIn = (e) => {
         const data = new FormData(e.target)
         const name = data.get("name")
+        const pass = data.get("pass")
         e.preventDefault()
-        signin(user, sign, name)
+        signin(user, sign, name, pass)
         nav("/")
     }
 
@@ -27,7 +28,7 @@ const SignIn = ({user, sign}) => {
                     <p>Логин</p>
                     <input name="name"/>
                     <p>Пароль</p>
-                    <input/>
+                    <input name="pass"/>
                 </div>
                 <button>Зайти</button>
             </form>
