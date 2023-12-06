@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 from sqlalchemy.engine import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -40,13 +40,31 @@ class Sites(Base):
 
 engine = create_engine("postgresql://postgres:postgres@postgres:5432/headbase")
 Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(bind=engine)
+
+
+def get_user(session: Session, name: str):
+    if user := session.query(User).filter(User.name == name).first():
+        return user
+    return "Пользователь не найден", True
+
+
+def add_user(session: Session, new_user):
+    try:
+        if get_user(session, new_user.username):
+            return "Пользователь существует", True
+
+        user = User(username=new_user.username, passwrod=new_user.password)
+        session.add(user)
+        session.commit()
+        return f"Пользователь успешно создан", False
+    except Exception as ex:
+        return f"Не удалось добавить пользователя [{ex}]", True
 
 
 @contextmanager
-def session_scope():
-    """Provide a transactional scope around a series of operations."""
-    session = Session()
+def SessionManager():
+    session = SessionLocal()
     try:
         yield session
         session.commit()

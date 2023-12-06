@@ -24,7 +24,7 @@ services:
         restart: always
         depends_on:
           - backend
-#
+
     postgres:
         image: postgres
         restart: always
