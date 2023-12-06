@@ -18,8 +18,8 @@
     border: 2px ridge grey;
 
     width: 100%;
-    max-width: 1000px;
-    height: 500px;
+    max-width: 300px;
+
 
     padding: 50px;
 
@@ -30,6 +30,10 @@
     gap: 10px;
     p {
         margin-bottom: 10px;
+    }
+
+    input {
+      margin-bottom: 10px;
     }
 
     button {
