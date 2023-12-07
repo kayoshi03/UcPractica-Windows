@@ -1,15 +1,9 @@
 import {DndProvider} from "react-dnd"
 import {HTML5Backend} from "react-dnd-html5-backend"
 import Board from "../../../components/Board/Board";
-import DragDrop from "../../../components/DragDrop";
 import {useState} from "react";
 import Label from "../../../components/Label/Label";
 
-const itemList = [
-    {id: 1, name: "dsa"},
-    {id: 2, name: "dsads"},
-    {id: 3, name: "ddssa"},
-]
 
 const Home = () => {
     const [items, setItems] = useState([
