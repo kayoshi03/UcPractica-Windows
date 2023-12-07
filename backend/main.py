@@ -72,13 +72,19 @@ def login(request: UserAuthRequest, response: Response):
         if not username or not password:
             return DefaultResponse(error=True, message="Пустые поля", payload=[])
 
-        user = get_user(session, username)
+        user: User = get_user(session, username)
 
         if isinstance(user, tuple):
             return DefaultResponse(error=user[0], message=user[1], payload=[])
         elif user:
-            if username == user.username and user.password == password:
-                token = create_access_token(user.as_dict())
+            if username == user.name and user.password == password:
+                token = create_access_token(
+                    {
+                        "id": user.id,
+                        "name": user.name,
+                        "password": user.password,
+                    }
+                )
                 response.set_cookie("access_token_cookie", token, httponly=True)
                 return DefaultResponse(error=False, message="OK", payload=token)
             else:

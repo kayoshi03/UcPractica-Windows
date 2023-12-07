@@ -38,7 +38,7 @@ class Sites(Base):
         return f"<Sites(id={self.id}, name={self.name}, url={self.url}, user_id={self.user_id})>"
 
 
-engine = create_engine("postgresql://postgres:postgres@postgres:5432/headbase")
+engine = create_engine("postgresql://postgres:postgres@postgres_base:5432/headbase")
 Base.metadata.create_all(engine)
 SessionLocal = sessionmaker(bind=engine)
 

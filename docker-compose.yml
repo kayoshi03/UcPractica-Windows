@@ -11,7 +11,7 @@ services:
             - ./backend:/backend
         restart: always
         depends_on:
-          - postgres
+          - postgres_base
 
     frontend:
         build:
@@ -25,7 +25,7 @@ services:
         depends_on:
           - backend
 
-    postgres:
+    postgres_base:
         image: postgres
         restart: always
         ports:
