@@ -6,16 +6,16 @@ import {useState} from "react";
 import Label from "../../../components/Label/Label";
 
 const itemList = [
-    {id:1, name: "dsa"},
-    {id:2, name: "dsads"},
-    {id:3, name: "ddssa"},
+    {id: 1, name: "dsa"},
+    {id: 2, name: "dsads"},
+    {id: 3, name: "ddssa"},
 ]
 
 const Home = () => {
     const [items, setItems] = useState([
-        {id:1, name: "dsa"},
-        {id:2, name: "dsads"},
-        {id:3, name: "ddssa"}
+        {id: 1, name: "dsa"},
+        {id: 2, name: "dsads"},
+        {id: 3, name: "ddssa"}
     ])
     const handleDrop = (id) => {
         console.log("ok")

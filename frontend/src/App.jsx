@@ -5,12 +5,13 @@ import SignIn from "./Layout/Page/SignIn/SignIn";
 import {useState} from "react";
 import Home from "./Layout/Page/Home/Home";
 import SignUp from "./Layout/Page/SignUp/SignUp";
+import {is_auth} from "./lib/utils/API";
 
 const name = localStorage.getItem("name")
 const auth = localStorage.getItem("auth")
 console.log(name)
 const App = () => {
-    const [user, setUser] = useState(auth === "true" ? {name:name, auth: auth} : {name: "", auth: false} );
+    const [user, setUser] = useState(auth === "true" && is_auth() ? {name:name, auth: auth} : {name: "", auth: false} );
 
     console.log(user)
 

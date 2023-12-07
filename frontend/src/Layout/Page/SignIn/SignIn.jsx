@@ -2,6 +2,8 @@ import "./style.scss"
 import {useNavigate} from "react-router";
 import {useEffect} from "react";
 import {signin} from "../../../lib/utils/signin";
+import {is_auth} from "../../../lib/utils/API";
+
 const SignIn = ({user, sign}) => {
     const nav = useNavigate()
     const signIn = (e) => {
@@ -14,7 +16,7 @@ const SignIn = ({user, sign}) => {
     }
 
     useEffect(() => {
-        if (user.auth) {
+        if (is_auth() && user.auth) {
             nav("/")
         }
     })

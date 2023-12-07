@@ -6,7 +6,6 @@ import {useState} from "react";
 const Layout = ({user, userChange}) => {
     const [show, setShow] = useState(false)
 
-
     return (
         <>
             <main>
