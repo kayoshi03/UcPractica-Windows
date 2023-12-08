@@ -36,9 +36,16 @@
       margin-bottom: 10px;
     }
 
+    a {
+       text-decoration: none;
+       color: black;
+    }
+
     button {
       height: auto;
       padding: 10px 20px;
+      margin-bottom: 10px;
     }
   }
+
 }
