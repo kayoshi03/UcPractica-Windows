@@ -1,3 +1,5 @@
+import logging
+
 import requests
 
 from fastapi import FastAPI, HTTPException, Depends, status, UploadFile
@@ -89,5 +91,5 @@ def login(request: UserAuthRequest, response: Response):
                 return DefaultResponse(error=False, message="OK", payload=token)
             else:
                 return DefaultResponse(error=True, message="Неверный логин или пароль", payload=None)
-
-        return DefaultResponse(error=True, message="Пользователь не найден", payload=None)
+        else:
+            return DefaultResponse(error=True, message="Пользователь не найден", payload=None)
