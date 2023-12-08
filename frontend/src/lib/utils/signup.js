@@ -1,5 +1,4 @@
 import {API} from "./API";
-import cookie from "js-cookie";
 
 export const signup = async (name, pass, user, setUser) => {
     try {
