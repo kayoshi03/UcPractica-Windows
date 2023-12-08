@@ -1,3 +1,5 @@
+import logging
+
 import requests
 
 from fastapi import FastAPI, HTTPException, Depends, status, UploadFile
@@ -57,7 +59,7 @@ def register(request: UserAuthRequest):
 
         new_user = add_user(session, request)
 
-        return DefaultResponse(error=new_user[0], message=new_user[1], payload=[])
+        return DefaultResponse(error=new_user[1], message=new_user[0], payload=[])
 
 
 @app.post("/login", response_model=DefaultResponse, tags=["API", "HEAD", "AUTH"])
@@ -75,7 +77,7 @@ def login(request: UserAuthRequest, response: Response):
         user: User = get_user(session, username)
 
         if isinstance(user, tuple):
-            return DefaultResponse(error=user[0], message=user[1], payload=[])
+            return DefaultResponse(error=user[1], message=user[0], payload=[])
         elif user:
             if username == user.name and user.password == password:
                 token = create_access_token(
@@ -89,5 +91,5 @@ def login(request: UserAuthRequest, response: Response):
                 return DefaultResponse(error=False, message="OK", payload=token)
             else:
                 return DefaultResponse(error=True, message="Неверный логин или пароль", payload=None)
-
-        return DefaultResponse(error=True, message="Пользователь не найден", payload=None)
+        else:
+            return DefaultResponse(error=True, message="Пользователь не найден", payload=None)

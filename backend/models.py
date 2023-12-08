@@ -44,9 +44,8 @@ SessionLocal = sessionmaker(bind=engine)
 
 
 def get_user(session: Session, name: str):
-    if user := session.query(User).filter(User.name == name).first():
-        return user
-    return "Пользователь не найден", True
+    user = session.query(User).filter(User.name == name).first()
+    return user if user else False
 
 
 def add_user(session: Session, new_user):
@@ -54,7 +53,7 @@ def add_user(session: Session, new_user):
         if get_user(session, new_user.username):
             return "Пользователь существует", True
 
-        user = User(username=new_user.username, passwrod=new_user.password)
+        user = User(name=new_user.username, password=new_user.password)
         session.add(user)
         session.commit()
         return f"Пользователь успешно создан", False
