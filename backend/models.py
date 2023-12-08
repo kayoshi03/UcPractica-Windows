@@ -45,7 +45,7 @@ SessionLocal = sessionmaker(bind=engine)
 
 def get_user(session: Session, name: str):
     user = session.query(User).filter(User.name == name).first()
-    return True if user else False
+    return user if user else False
 
 
 def add_user(session: Session, new_user):
