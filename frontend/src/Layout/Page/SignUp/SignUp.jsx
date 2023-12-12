@@ -26,7 +26,7 @@ const SignUp = ({user, sign}) => {
                     <p>Логин</p>
                     <input name="name"/>
                     <p>Пароль</p>
-                    <input name="pass"/>
+                    <input type="password" name="pass"/>
                 </div>
                 <button>Зайти</button>
                 <Link to="/signin">Авторизоваться</Link>

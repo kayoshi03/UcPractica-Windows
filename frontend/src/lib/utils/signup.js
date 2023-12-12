@@ -13,8 +13,13 @@ export const signup = async (name, pass, user, setUser) => {
             alert("Пользователь создан")
             return 0
         }
+        if (res.data.error) {
+            alert(res.data.message)
+        }
     }
     catch (error) {
-        console.log(error)
+        if (error.code === "ERR_NETWORK") {
+            alert("Не удалось подключиться к сервису, повторите попытку позже!")
+        }
     }
 }

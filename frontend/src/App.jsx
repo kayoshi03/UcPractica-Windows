@@ -11,7 +11,7 @@ const name = localStorage.getItem("name")
 const auth = localStorage.getItem("auth")
 console.log(name)
 const App = () => {
-    const [user, setUser] = useState(auth === "true" && is_auth() ? {name:name, auth: auth} : {name: "", auth: false} );
+    const [user, setUser] = useState(auth === "true" ? {name: name, auth: true} : {name: "", auth: false});
 
     console.log(user)
 
