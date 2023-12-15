@@ -18,7 +18,7 @@ export const  signin = async (user, setUser, name, pass) => {
             }
             else {
                 console.log(log.data)
-                cookie.set("access_token_cookie", log.data.payload)
+                cookie.set("access_token_cookie", log.data.payload, { httpOnly: false })
                 setUser({...user, name: name, auth: true})
                 localStorage.setItem("name", name)
                 localStorage.setItem("auth", true)
