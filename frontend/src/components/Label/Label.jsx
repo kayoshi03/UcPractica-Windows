@@ -1,4 +1,4 @@
-import test from "./../../assets/logo.png"
+
 import "./style.scss"
 import {Link} from "react-router-dom";
 import {Tooltip} from "react-tooltip";
@@ -13,8 +13,8 @@ const Label = ({item, id}) => {
     })
     return(
         <>
-            <Link ref={drag} target="_blank" to={item.link} className={`label my-anchor-element${item.id}`}>
-                <img src={test} alt=""/>
+            <Link ref={drag} target="_blank" to={item.url} className={`label my-anchor-element${item.id}`}>
+                <img src={`http://31.129.105.229:8080/get_icon?user_id=${id}`} alt=""/>
                 <p>{item.name}</p>
             </Link>
             <Tooltip anchorSelect={`.my-anchor-element${item.id}`}>

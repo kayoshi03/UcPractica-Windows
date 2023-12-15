@@ -1,16 +1,34 @@
 import {DndProvider} from "react-dnd"
 import {HTML5Backend} from "react-dnd-html5-backend"
 import Board from "../../../components/Board/Board";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Label from "../../../components/Label/Label";
+import {API} from "../../../lib/utils/API"
+import cookie from "js-cookie";
 
 
 const Home = () => {
-    const [items, setItems] = useState([
-        {id: 1, name: "dsa"},
-        {id: 2, name: "dsads"},
-        {id: 3, name: "ddssa"}
-    ])
+    const [items, setItems] = useState([])
+    
+    const fetchLabel = async () => {
+        try {
+            const data = await API.get('', {
+                headers: {
+                    Authorization: `Bearer ${cookie.get("access_token_cookie")}`,
+                    "Access-Control-Allow-Origin" : "*"
+                }
+            })
+            setItems(data.data.payload)
+        }
+        catch(error) {
+
+        }
+    }
+
+    useEffect(() => {
+        fetchLabel()
+    }, [])
+
     const handleDrop = (id) => {
         console.log("ok")
         const newItems = [...items];

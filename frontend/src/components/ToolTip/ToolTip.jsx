@@ -4,8 +4,8 @@ const ToolTip = ({time, achiv}) => {
     return(
         <>
             <h1>Статистика</h1>
-            <p>Время:{time}</p>
-            <p>Достижения: {achiv}</p>
+            <p>Время: {time} ч.</p>
+            <p>Достижения: {achiv} / {achiv}</p>
         </>
     )
 };
