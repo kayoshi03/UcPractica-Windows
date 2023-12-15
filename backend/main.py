@@ -62,12 +62,13 @@ def root(current_user: User = Depends(get_current_user)):
         который возвращает JSON
     """
     with SessionManager() as session:
-        applications = session.query(Sites).filter(Sites.user_id == current_user.id).all()
+        applications: list[Sites] = session.query(Sites).filter(Sites.user_id == current_user.id).all()
 
         result = []
         for application in applications:
             result.append(
                 {
+                    "id": application.user_id,
                     "name": application.name,
                     "url": application.url,
                     "photo_path": application.photo_path
@@ -157,3 +158,21 @@ def get_image(user_id: int):
                 return DefaultResponse(error=True, message="Изображение не найдено", payload=None)
         else:
             return DefaultResponse(error=True, message="Изображение по пользователю не найдено", payload=None)
+
+
+@app.get("/get_achievements")
+def get_achievements(url: str):
+    """
+        Запрос серверу на получение достижений.
+        Возможные достижения: https://github.com/kayoshi03/UcPractica-Windows/blob/main/README.md
+    """
+    return DefaultResponse()
+
+
+@app.get("/labels")
+def labels():
+    """
+        Маршрут предназначен для возврата labels приложения.
+        Возможные лейблы: https://github.com/kayoshi03/UcPractica-Windows/blob/main/Label.md
+    """
+    return DefaultResponse()
