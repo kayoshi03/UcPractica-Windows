@@ -39,7 +39,7 @@ class Sites(Base):
 
 
 engine = create_engine("postgresql://postgres:postgres@postgres_base:5432/headbase")
-# Base.metadata.drop_all(engine)
+Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
 SessionLocal = sessionmaker(bind=engine)
 

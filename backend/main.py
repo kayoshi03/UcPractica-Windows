@@ -44,8 +44,10 @@ def startup():
     """
     with SessionManager() as session:
         if not session.query(User).all():
-            admin = User(username="admin", email="admin@admin.ru", password="admin")
+            admin = User(name="admin", email="admin@admin.ru", password="admin")
             session.add(admin)
+            session.commit()
+
             site = Sites(name="admin", url="https://www.google.com", user_id=admin.id, photo_path=None)
             session.add(site)
             session.commit()
