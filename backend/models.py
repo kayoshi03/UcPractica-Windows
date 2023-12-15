@@ -3,7 +3,6 @@ from sqlalchemy.engine import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -30,6 +29,7 @@ class Sites(Base):
     name = Column(String(255), nullable=False)
     url = Column(String, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"))
+    photo_path = Column(String)
 
     def __repr__(self):
         return f"<Sites(id={self.id}, name={self.name}, url={self.url}, user_id={self.user_id})>"
@@ -39,6 +39,7 @@ class Sites(Base):
 
 
 engine = create_engine("postgresql://postgres:postgres@postgres_base:5432/headbase")
+# Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
 SessionLocal = sessionmaker(bind=engine)
 
@@ -46,6 +47,18 @@ SessionLocal = sessionmaker(bind=engine)
 def get_user(session: Session, name: str):
     user = session.query(User).filter(User.name == name).first()
     return user if user else False
+
+
+def add_icon(session: Session, photo_path: str, user):
+    try:
+        site: Sites = session.query(Sites).filter(Sites.user_id == user.id).first()
+        if site:
+            site.photo_path = photo_path
+            session.commit()
+            return "Icon successfully added", False
+        return "User not found", True
+    except Exception as ex:
+        return str(ex), True
 
 
 def add_user(session: Session, new_user):

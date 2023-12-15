@@ -1,7 +1,6 @@
-from datetime import datetime, timedelta
-
 import jwt
 
+from datetime import datetime, timedelta
 from fastapi import HTTPException
 from fastapi.security.http import HTTPBase, HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.openapi.models import HTTPBearer as HTTPBearerModel
@@ -15,24 +14,20 @@ ALGORITHM = "HS256"
 
 
 class CustomHTTPBearer(HTTPBase):
-    """
-        Класс для проверки авторизации пользователя
-        Данный класс расширен проверкой jwt токена в куки
-    """
     def __init__(
-            self,
-            *,
-            bearerFormat: str = None,
-            scheme_name: str = None,
-            description: str = None,
-            auto_error: bool = True,
+        self,
+        *,
+        bearerFormat: str = None,
+        scheme_name: str = None,
+        description: str = None,
+        auto_error: bool = True,
     ):
         self.model = HTTPBearerModel(bearerFormat=bearerFormat, description=description)
         self.scheme_name = scheme_name or self.__class__.__name__
         self.auto_error = auto_error
 
     async def __call__(
-            self, request: Request
+        self, request: Request
     ) -> HTTPAuthorizationCredentials:
         authorization = request.headers.get("Authorization") or request.cookies.get("access_token_cookie")
         scheme, credentials = get_authorization_scheme_param(authorization)
