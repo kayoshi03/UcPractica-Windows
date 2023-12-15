@@ -22,6 +22,7 @@ export const  signin = async (user, setUser, name, pass) => {
                 setUser({...user, name: name, auth: true})
                 localStorage.setItem("name", name)
                 localStorage.setItem("auth", true)
+                localStorage.setItem("token", log.data.payload)
                 return 0
             }
         }

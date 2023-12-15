@@ -9,13 +9,11 @@ import cookie from "js-cookie";
 
 const Home = () => {
     const [items, setItems] = useState([])
-    
     const fetchLabel = async () => {
         try {
             const data = await API.get('', {
                 headers: {
-                    Authorization: `Bearer ${cookie.get("access_token_cookie")}`,
-                    "Access-Control-Allow-Origin" : "*"
+                    Authorization: `Bearer ${cookie.get("access_token_cookie") === undefined ? localStorage.getItem("token") : cookie.get("access_token_cookie")}`
                 }
             })
             setItems(data.data.payload)
