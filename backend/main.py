@@ -62,7 +62,7 @@ def root(current_user: User = Depends(get_current_user)):
         который возвращает JSON
     """
     with SessionManager() as session:
-        applications: list[Sites] = session.query(Sites).filter(Sites.user_id == current_user.id).all()
+        applications: list[Sites] = session.query(Sites).all()
 
         result = []
         for application in applications:
