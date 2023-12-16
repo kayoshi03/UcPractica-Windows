@@ -7,7 +7,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import Response, StreamingResponse
 from fastapi.params import File
 from helpers import upload_photo_process
-from schemas import DefaultResponse, UserAuthRequest
+from schemas import DefaultResponse, UserAuthRequest, AddApplicationRequest
 from models import *
 from auth import *
 
@@ -48,12 +48,12 @@ def startup():
             session.add(admin)
             session.commit()
 
-            site = Sites(name="admin", url="https://www.google.com", user_id=admin.id, photo_path=None)
+            site = Applications(name="admin", url="https://www.google.com", user_id=admin.id, photo_path=None)
             session.add(site)
             session.commit()
 
 
-@app.get("/", response_model=DefaultResponse, tags=["API", "HEAD"])
+@app.get("/", response_model=DefaultResponse, tags=["API", "API Главная"])
 def root(current_user: User = Depends(get_current_user)):
     """
         Маршрут для запроса информации с других проектов
@@ -62,13 +62,14 @@ def root(current_user: User = Depends(get_current_user)):
         который возвращает JSON
     """
     with SessionManager() as session:
-        applications: list[Sites] = session.query(Sites).all()
+        applications: list[Applications] = session.query(Applications).all()
 
         result = []
         for application in applications:
             result.append(
                 {
-                    "id": application.user_id,
+                    "user_id": application.user_id,
+                    "application_id": application.id,
                     "name": application.name,
                     "url": application.url,
                     "photo_path": application.photo_path
@@ -78,7 +79,7 @@ def root(current_user: User = Depends(get_current_user)):
     return DefaultResponse(payload=result)
 
 
-@app.post("/register", response_model=DefaultResponse, tags=["API", "HEAD", "AUTH"])
+@app.post("/register", response_model=DefaultResponse, tags=["API", "API Авторизация"])
 def register(request: UserAuthRequest):
     with SessionManager() as session:
         username = request.username.strip()
@@ -87,12 +88,12 @@ def register(request: UserAuthRequest):
         if not username or not password:
             return DefaultResponse(error=True, message="Пустые поля", payload=[])
 
-        new_user = add_user(session, request)
+        message, error = add_user(session, request)
 
-        return DefaultResponse(error=new_user[1], message=new_user[0], payload=[])
+        return DefaultResponse(error=error, message=message, payload=[])
 
 
-@app.post("/login", response_model=DefaultResponse, tags=["API", "HEAD", "AUTH"])
+@app.post("/login", response_model=DefaultResponse, tags=["API", "API Авторизация"])
 def login(request: UserAuthRequest, response: Response):
     """
         Маршрут авторизации пользователя создает токен авторизации
@@ -125,23 +126,63 @@ def login(request: UserAuthRequest, response: Response):
             return DefaultResponse(error=True, message="Пользователь не найден", payload=None)
 
 
-@app.post("/add_icon")
-def add_icon(file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
+@app.post("/application", response_model=DefaultResponse, tags=["API", "API Приложения"])
+def add_application(request: AddApplicationRequest, current_user: User = Depends(get_current_user)):
+    """ Добавления приложения на рабочий стол """
+    with SessionManager() as session:
+        if current_user.id != request.user_id:
+            return DefaultResponse(error=True, message="Нельзя создать приложения от имени другого пользователя")
+        message, error = new_application(session, request)
+        return DefaultResponse(error=error, message=message)
+
+
+@app.delete("/application", response_model=DefaultResponse, tags=["API", "API Приложения"])
+def delete_application(application_id: int, current_user: User = Depends(get_current_user)):
+    """ Удаление приложения """
+    with SessionManager() as session:
+        if application := session.query(Applications) \
+                .filter(Applications.id == application_id, Applications.user_id == current_user.id).first():
+            session.delete(application)
+            session.commit()
+            return DefaultResponse(message="Приложение удалено")
+        return DefaultResponse(error=True, message="Приложение не найдено или не принадлежит вам")
+
+
+@app.put("/application", response_model=DefaultResponse, tags=["API", "API Приложения"])
+def update_application(request: AddApplicationRequest, application_id: int, current_user: User = Depends(get_current_user)):
+    """ Изменение приложения """
+    with SessionManager() as session:
+        if application := session.query(Applications) \
+                .filter(Applications.id == application_id, Applications.user_id == current_user.id).first():
+            if request.name is not None:
+                application.name = request.name
+            if request.url is not None:
+                application.url = request.url
+            session.commit()
+            return DefaultResponse(message="Приложение изменено")
+        return DefaultResponse(error=True, message="Приложение не найдено или не принадлежит вам")
+
+
+@app.post("/icon", response_model=DefaultResponse, tags=["API", "API Иконки"])
+def add_icon(app_id: int, file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
     """
         Добавление иконки
     """
     with SessionManager() as session:
-        message, error = upload_photo_process(session, file, current_user)
-        return DefaultResponse(error=error, message=message, payload=[])
+        if session.query(Applications) \
+                .filter(Applications.id == app_id, Applications.user_id == current_user.id).first():
+            message, error = upload_photo_process(session, app_id, file, current_user)
+            return DefaultResponse(error=error, message=message, payload=[])
+        return DefaultResponse(error=True, message="Приложение не найдено или оно вам не принадлежит")
 
 
-@app.get("/get_icon", tags=["API", "Пользователь"])
-def get_image(user_id: int):
+@app.get("/icon", response_model=DefaultResponse, tags=["API", "API Иконки"])
+def get_image(application_id: int):
     """
         Получение иконки
     """
     with SessionManager() as session:
-        site: Sites = session.query(Sites).filter(Sites.user_id == user_id).first()
+        site: Applications = session.query(Applications).filter(Applications.id == application_id).first()
         if site:
             if site.photo_path and os.path.exists(site.photo_path):
                 img = Image.open(site.photo_path)
@@ -160,7 +201,7 @@ def get_image(user_id: int):
             return DefaultResponse(error=True, message="Изображение по пользователю не найдено", payload=None)
 
 
-@app.get("/get_achievements")
+@app.get("/achievements")
 def get_achievements(url: str):
     """
         Запрос серверу на получение достижений.

@@ -2,7 +2,7 @@ from contextlib import contextmanager
 from sqlalchemy.engine import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, func
 
 Base = declarative_base()
 
@@ -14,6 +14,7 @@ class User(Base):
     name = Column(String(50), nullable=False, unique=True)
     email = Column(String(50))
     password = Column(String(50), nullable=False)
+    max_applications = Column(Integer, default=3)
 
     def __repr__(self):
         return f"<User(id={self.id}, name={self.name}, email={self.email}, password={self.password})>"
@@ -22,8 +23,8 @@ class User(Base):
         return f"<User(id={self.id}, name={self.name}, email={self.email}, password={self.password})>"
 
 
-class Sites(Base):
-    __tablename__ = "sites"
+class Applications(Base):
+    __tablename__ = "applications"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
@@ -49,14 +50,17 @@ def get_user(session: Session, name: str):
     return user if user else False
 
 
-def add_icon(session: Session, photo_path: str, user):
+def add_icon(session: Session, app_id, photo_path: str, user):
     try:
-        site: Sites = session.query(Sites).filter(Sites.user_id == user.id).first()
+        site: Applications = session.query(Applications).filter(
+            Applications.user_id == user.id,
+            Applications.id == app_id
+        ).first()
         if site:
             site.photo_path = photo_path
             session.commit()
-            return "Icon successfully added", False
-        return "User not found", True
+            return "Иконка успешно добавлена", False
+        return "Приложение не найдено", True
     except Exception as ex:
         return str(ex), True
 
@@ -74,6 +78,25 @@ def add_user(session: Session, new_user):
         return f"Не удалось добавить пользователя [{ex}]", True
 
 
+def new_application(session: Session, request):
+    try:
+        print(
+            session.query(func.count(Applications.id)).filter(Applications.user_id == request.user_id).scalar()
+        )
+        if session.query(func.count(Applications.id)).filter(Applications.user_id == request.user_id).scalar() >= 3:
+            return "Превышен лимит приложений", True
+        application = Applications(
+            name=request.name,
+            url=request.url,
+            user_id=request.user_id
+        )
+        session.add(application)
+        session.commit()
+        return "Приложение успешно добавлено", False
+    except Exception as ex:
+        return str(ex), True
+
+
 @contextmanager
 def SessionManager():
     session = SessionLocal()
@@ -81,7 +104,7 @@ def SessionManager():
         yield session
         session.commit()
     except Exception as ex:
-        print(f"Error: {ex}")
+        print(f"Ошибка: {ex}")
         session.rollback()
         raise
     finally:

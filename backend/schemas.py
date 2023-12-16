@@ -11,3 +11,9 @@ class DefaultResponse(BaseModel):
 class UserAuthRequest(BaseModel):
     username: Optional[str]
     password: Optional[str]
+
+
+class AddApplicationRequest(BaseModel):
+    name: Optional[str] = None
+    url: Optional[str] = None
+    user_id: Optional[int]
