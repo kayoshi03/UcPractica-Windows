@@ -127,11 +127,7 @@ def login(request: UserAuthRequest, response: Response):
 def add_application(request: CreateApplicationRequest, current_user: User = Depends(get_current_user)):
     """ Добавления приложения на рабочий стол """
     with SessionManager() as session:
-        if current_user.id != request.user_id:
-            return CreateApplicationResponse(error=True,
-                                             message="Нельзя создать приложение от имени другого пользователя",
-                                             payload=None)
-        message, error, application = new_application(session, request)
+        message, error, application = new_application(session, request, current_user)
         result = ApplicationElement(**application.to_json()) if application else None
         return CreateApplicationResponse(error=error, message=message, payload=result)
 

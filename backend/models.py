@@ -85,17 +85,14 @@ def add_user(session: Session, new_user):
         return f"Не удалось добавить пользователя [{ex}]", True
 
 
-def new_application(session: Session, request):
+def new_application(session: Session, request, current_user):
     try:
-        print(
-            session.query(func.count(Applications.id)).filter(Applications.user_id == request.user_id).scalar()
-        )
-        if session.query(func.count(Applications.id)).filter(Applications.user_id == request.user_id).scalar() >= 3:
+        if session.query(func.count(Applications.id)).filter(Applications.user_id == current_user.id).scalar() >= 3:
             return "Превышен лимит приложений", True, None
         application = Applications(
             name=request.name,
             url=request.url,
-            user_id=request.user_id
+            user_id=current_user.id
         )
         session.add(application)
         session.commit()

@@ -24,7 +24,6 @@ class ApplicationElement(BaseModel):
 class CreateApplicationRequest(BaseModel):
     name: Optional[str] = None
     url: Optional[str] = None
-    user_id: Optional[int]
 
 
 class CreateApplicationResponse(DefaultResponse):
