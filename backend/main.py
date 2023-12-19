@@ -128,11 +128,12 @@ def add_application(request: CreateApplicationRequest, current_user: User = Depe
     """ Добавления приложения на рабочий стол """
     with SessionManager() as session:
         if current_user.id != request.user_id:
-            return DefaultResponse(error=True, message="Нельзя создать приложения от имени другого пользователя")
+            return CreateApplicationResponse(error=True,
+                                             message="Нельзя создать приложение от имени другого пользователя",
+                                             payload=None)
         message, error, application = new_application(session, request)
         result = ApplicationElement(**application.to_json()) if application else None
-        return CreateApplicationResponse(error=error, message=message,
-                                         payload=result)
+        return CreateApplicationResponse(error=error, message=message, payload=result)
 
 
 @app.delete("/application", response_model=DefaultResponse, tags=["API", "API Приложения"])
