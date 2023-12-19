@@ -1,8 +1,9 @@
 import { useState } from "react";
 import "./style.scss"
 import {useDrop} from "react-dnd";
+import Modal from "../Modal/Modal";
 
-const Board = ({onDrop, children}) => {
+const Board = ({onDrop, children, item}) => {
     const [,drop] = useDrop({
         accept: "div",
         drop: (item) => onDrop(item.id)
@@ -49,12 +50,11 @@ const Board = ({onDrop, children}) => {
                 : 
                 <></>
             }
-            
             {
                 showModal ?
-                <div onClick={closeModal}  className="modal">
-                    Gey
-                </div>
+                (
+                    <Modal userID={item[0].user_id} close={closeModal}/>
+                )
                 : 
                 <></>
             }
