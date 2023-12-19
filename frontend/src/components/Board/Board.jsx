@@ -3,7 +3,7 @@ import "./style.scss"
 import {useDrop} from "react-dnd";
 import Modal from "../Modal/Modal";
 
-const Board = ({onDrop, children, item}) => {
+const Board = ({onDrop, children, item, update}) => {
     const [,drop] = useDrop({
         accept: "div",
         drop: (item) => onDrop(item.id)
@@ -53,7 +53,7 @@ const Board = ({onDrop, children, item}) => {
             {
                 showModal ?
                 (
-                    <Modal userID={item[0].user_id} close={closeModal}/>
+                    <Modal update={update} userID={item[0].user_id} close={closeModal}/>
                 )
                 : 
                 <></>

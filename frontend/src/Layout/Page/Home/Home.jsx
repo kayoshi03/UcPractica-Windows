@@ -51,10 +51,10 @@ const Home = () => {
     return(
         <>
             <DndProvider backend={HTML5Backend}>
-                <Board item={items} onDrop={handleDrop}>
+                <Board update={fetchLabel} item={items} onDrop={handleDrop}>
                     {
                         items.map((item) => (
-                            <Label key={item.application_id} item={item} id={item.application_id}/>
+                            <Label key={item.id} item={item} id={item.id}/>
                         ))
                     }
                 </Board>

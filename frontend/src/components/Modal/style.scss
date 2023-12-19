@@ -12,7 +12,7 @@
   .modal {
     padding: 20px;
     width: 500px;
-    height: 200px;
+    height: 300px;
     position: absolute;
     z-index: 102;
     background: gray;
@@ -26,13 +26,21 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        p {
+        h1 {
             width: 100%;
             text-align: center;
         }
     }
     .modal-body{
-        
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+
+        height: 100%;
+      button {
+        height: 30px;
+      }
     }
   }
   .modal-window {
