@@ -130,8 +130,9 @@ def add_application(request: CreateApplicationRequest, current_user: User = Depe
         if current_user.id != request.user_id:
             return DefaultResponse(error=True, message="Нельзя создать приложения от имени другого пользователя")
         message, error, application = new_application(session, request)
+        result = ApplicationElement(**application.to_json()) if application else None
         return CreateApplicationResponse(error=error, message=message,
-                                         payload=ApplicationElement(**application.to_json()))
+                                         payload=result)
 
 
 @app.delete("/application", response_model=DefaultResponse, tags=["API", "API Приложения"])
