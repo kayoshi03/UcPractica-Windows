@@ -30,6 +30,9 @@
             width: 100%;
             text-align: center;
         }
+        span {
+          cursor: pointer;
+        }
     }
     .modal-body{
         display: flex;

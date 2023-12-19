@@ -39,6 +39,10 @@ const Modal = ({close, update}) => {
                 const file = data.get("icon")
                 addIcon(label.data.payload.id, file)
                 update()
+                console.log(e.target);
+                e.target.name.value = ""
+                e.target.url.value = ""
+                e.target.icon.value = ""
             }
         }
         catch(error) {
