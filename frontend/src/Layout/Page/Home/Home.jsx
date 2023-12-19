@@ -11,7 +11,6 @@ import { useNavigate } from "react-router";
 const Home = () => {
     const nav = useNavigate()
     const [items, setItems] = useState([])
-    console.log(cookie.get("access_token_cookie"))
     const fetchLabel = async () => {
         try {
             const data = await API.get('', {
@@ -24,10 +23,12 @@ const Home = () => {
         catch(error) {
             if(error.response.status === 401) {
                 localStorage.removeItem("token")
+                cookie.remove("access_token_cookie")
                 nav("/signin")
             }
         }
     }
+    console.log(items);
 
     useEffect(() => {
 
@@ -50,10 +51,10 @@ const Home = () => {
     return(
         <>
             <DndProvider backend={HTML5Backend}>
-                <Board onDrop={handleDrop}>
+                <Board item={items} onDrop={handleDrop}>
                     {
                         items.map((item) => (
-                            <Label key={item.id} item={item} id={item.id}/>
+                            <Label key={item.application_id} item={item} id={item.application_id}/>
                         ))
                     }
                 </Board>

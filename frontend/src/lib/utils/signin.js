@@ -15,6 +15,8 @@ export const  signin = async (user, setUser, name, pass) => {
 
             if (log.data.error) {
                 alert(log.data.message)
+                localStorage.removeItem("name")
+                localStorage.removeItem("auth")
             }
             else {
                 console.log(log.data)
