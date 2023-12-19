@@ -132,8 +132,8 @@ def add_application(request: AddApplicationRequest, current_user: User = Depends
     with SessionManager() as session:
         if current_user.id != request.user_id:
             return DefaultResponse(error=True, message="Нельзя создать приложения от имени другого пользователя")
-        message, error = new_application(session, request)
-        return DefaultResponse(error=error, message=message)
+        message, error, application = new_application(session, request)
+        return DefaultResponse(error=error, message=message, payload=application.to_json())
 
 
 @app.delete("/application", response_model=DefaultResponse, tags=["API", "API Приложения"])

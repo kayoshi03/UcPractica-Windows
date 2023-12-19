@@ -22,6 +22,9 @@ class User(Base):
     def __str__(self):
         return f"<User(id={self.id}, name={self.name}, email={self.email}, password={self.password})>"
 
+    def to_json(self):
+        return {field.name: getattr(self, field.name) for field in self.__table__.c}
+
 
 class Applications(Base):
     __tablename__ = "applications"
@@ -37,6 +40,10 @@ class Applications(Base):
 
     def __str__(self):
         return f"<Sites(id={self.id}, name={self.name}, url={self.url}, user_id={self.user_id})>"
+
+    def to_json(self):
+        return {field.name: getattr(self, field.name) for field in self.__table__.c}
+
 
 
 engine = create_engine("postgresql://postgres:postgres@postgres_base:5432/headbase")
@@ -59,10 +66,10 @@ def add_icon(session: Session, app_id, photo_path: str, user):
         if site:
             site.photo_path = photo_path
             session.commit()
-            return "Иконка успешно добавлена", False
-        return "Приложение не найдено", True
+            return "Иконка успешно добавлена", False, site
+        return "Приложение не найдено", True, None
     except Exception as ex:
-        return str(ex), True
+        return str(ex), True, None
 
 
 def add_user(session: Session, new_user):
@@ -84,7 +91,7 @@ def new_application(session: Session, request):
             session.query(func.count(Applications.id)).filter(Applications.user_id == request.user_id).scalar()
         )
         if session.query(func.count(Applications.id)).filter(Applications.user_id == request.user_id).scalar() >= 3:
-            return "Превышен лимит приложений", True
+            return "Превышен лимит приложений", True, None
         application = Applications(
             name=request.name,
             url=request.url,
@@ -92,9 +99,9 @@ def new_application(session: Session, request):
         )
         session.add(application)
         session.commit()
-        return "Приложение успешно добавлено", False
+        return "Приложение успешно добавлено", False, application
     except Exception as ex:
-        return str(ex), True
+        return str(ex), True, None
 
 
 @contextmanager
