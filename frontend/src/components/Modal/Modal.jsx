@@ -3,7 +3,7 @@ import { API } from "../../lib/utils/API"
 import "./style.scss"
 import cookie from "js-cookie"
 
-const Modal = ({close, userID, update}) => {
+const Modal = ({close, update}) => {
     const [label, setLabel] = useState({})
 
     const addIcon = async (id, filename) => {
@@ -27,7 +27,6 @@ const Modal = ({close, userID, update}) => {
             const label = await API.post("/application", {
                     name: data.get("name"),
                     url: data.get("url"),
-                    user_id: userID
                 },
                 {
                     headers: {

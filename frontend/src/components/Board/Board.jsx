@@ -53,7 +53,7 @@ const Board = ({onDrop, children, item, update}) => {
             {
                 showModal ?
                 (
-                    <Modal update={update} userID={item[0].user_id} close={closeModal}/>
+                    <Modal update={update} close={closeModal}/>
                 )
                 : 
                 <></>
