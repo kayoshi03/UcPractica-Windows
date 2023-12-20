@@ -12,6 +12,8 @@ services:
         restart: always
         depends_on:
           - postgres_base
+        networks:
+            - good_network
 
     frontend:
         build:
@@ -24,6 +26,8 @@ services:
         restart: always
         depends_on:
           - backend
+        networks:
+            - good_network
 
     postgres_base:
         image: postgres
@@ -35,12 +39,17 @@ services:
             - POSTGRES_PASSWORD=postgres
             - POSTGRES_DB=headbase
         volumes:
-            - .pgdata:/var/lib/postgresql/data
+            - ./pgdata:/var/lib/postgresql/data
+        networks:
+            - good_network
         healthcheck:
           test: ["CMD-SHELL", "pg_isready -U postgres"]
           interval: 5s
           timeout: 5s
           retries: 5
 
+networks:
+  good_network:
+
 volumes:
-    pgdata:
+  pgdata:
