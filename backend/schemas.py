@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Optional, Any, List
 from pydantic import BaseModel
 
 
@@ -13,7 +13,26 @@ class UserAuthRequest(BaseModel):
     password: Optional[str]
 
 
-class AddApplicationRequest(BaseModel):
+class ApplicationElement(BaseModel):
+    id: Optional[int]
+    name: Optional[str]
+    url: Optional[str]
+    user_id: Optional[int]
+    photo_path: Optional[str]
+
+
+class CreateApplicationRequest(BaseModel):
     name: Optional[str] = None
     url: Optional[str] = None
-    user_id: Optional[int]
+
+
+class CreateApplicationResponse(DefaultResponse):
+    payload: Optional[ApplicationElement] = None
+
+
+class ApplicationListResponse(DefaultResponse):
+    payload: Optional[List[ApplicationElement]] = None
+
+
+class AddIconResponse(DefaultResponse):
+    payload: Optional[ApplicationElement]

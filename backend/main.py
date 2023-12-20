@@ -7,7 +7,8 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import Response, StreamingResponse
 from fastapi.params import File
 from helpers import upload_photo_process
-from schemas import DefaultResponse, UserAuthRequest, AddApplicationRequest
+from schemas import DefaultResponse, UserAuthRequest, CreateApplicationRequest, CreateApplicationResponse, \
+    ApplicationElement, ApplicationListResponse
 from models import *
 from auth import *
 
@@ -53,7 +54,7 @@ def startup():
             session.commit()
 
 
-@app.get("/", response_model=DefaultResponse, tags=["API", "API Главная"])
+@app.get("/", response_model=ApplicationListResponse, tags=["API", "API Главная"])
 def root(current_user: User = Depends(get_current_user)):
     """
         Маршрут для запроса информации с других проектов
@@ -67,16 +68,12 @@ def root(current_user: User = Depends(get_current_user)):
         result = []
         for application in applications:
             result.append(
-                {
-                    "user_id": application.user_id,
-                    "application_id": application.id,
-                    "name": application.name,
-                    "url": application.url,
-                    "photo_path": application.photo_path
-                }
+                ApplicationElement(
+                    **application.to_json()
+                )
             )
 
-    return DefaultResponse(payload=result)
+    return ApplicationListResponse(payload=result)
 
 
 @app.post("/register", response_model=DefaultResponse, tags=["API", "API Авторизация"])
@@ -126,14 +123,13 @@ def login(request: UserAuthRequest, response: Response):
             return DefaultResponse(error=True, message="Пользователь не найден", payload=None)
 
 
-@app.post("/application", response_model=DefaultResponse, tags=["API", "API Приложения"])
-def add_application(request: AddApplicationRequest, current_user: User = Depends(get_current_user)):
+@app.post("/application", response_model=CreateApplicationResponse, tags=["API", "API Приложения"])
+def add_application(request: CreateApplicationRequest, current_user: User = Depends(get_current_user)):
     """ Добавления приложения на рабочий стол """
     with SessionManager() as session:
-        if current_user.id != request.user_id:
-            return DefaultResponse(error=True, message="Нельзя создать приложения от имени другого пользователя")
-        message, error = new_application(session, request)
-        return DefaultResponse(error=error, message=message)
+        message, error, application = new_application(session, request, current_user)
+        result = ApplicationElement(**application.to_json()) if application else None
+        return CreateApplicationResponse(error=error, message=message, payload=result)
 
 
 @app.delete("/application", response_model=DefaultResponse, tags=["API", "API Приложения"])
@@ -149,7 +145,8 @@ def delete_application(application_id: int, current_user: User = Depends(get_cur
 
 
 @app.put("/application", response_model=DefaultResponse, tags=["API", "API Приложения"])
-def update_application(request: AddApplicationRequest, application_id: int, current_user: User = Depends(get_current_user)):
+def update_application(request: CreateApplicationRequest, application_id: int,
+                       current_user: User = Depends(get_current_user)):
     """ Изменение приложения """
     with SessionManager() as session:
         if application := session.query(Applications) \
@@ -171,8 +168,8 @@ def add_icon(app_id: int, file: UploadFile = File(...), current_user: User = Dep
     with SessionManager() as session:
         if session.query(Applications) \
                 .filter(Applications.id == app_id, Applications.user_id == current_user.id).first():
-            message, error = upload_photo_process(session, app_id, file, current_user)
-            return DefaultResponse(error=error, message=message, payload=[])
+            message, error, application = upload_photo_process(session, app_id, file, current_user)
+            return DefaultResponse(error=error, message=message, payload=ApplicationElement(**application.to_json()))
         return DefaultResponse(error=True, message="Приложение не найдено или оно вам не принадлежит")
 
 

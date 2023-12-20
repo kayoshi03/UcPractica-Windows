@@ -1,4 +1,30 @@
 .window {
+  position: relative;
   height: 100%;
   padding: 20px 20px;
+}
+
+.show {
+  display: none;
+  position: absolute;
+}
+
+.rigth {
+  p {
+    font-size: 14px;
+    color: #000;
+    width: 100%;
+    height: 100%;
+  }
+  
+  
+  position: absolute;
+  padding: 10px;
+  background-color: gray;
+  border: 2px ridge gray;
+  z-index: 101;
+  cursor: context-menu;
+}
+.rigth:hover {
+  background-color: rgb(116, 116, 116);
 }

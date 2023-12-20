@@ -5,9 +5,11 @@ import {useEffect, useState} from "react";
 import Label from "../../../components/Label/Label";
 import {API} from "../../../lib/utils/API"
 import cookie from "js-cookie";
+import { useNavigate } from "react-router";
 
 
 const Home = () => {
+    const nav = useNavigate()
     const [items, setItems] = useState([])
     const fetchLabel = async () => {
         try {
@@ -19,11 +21,17 @@ const Home = () => {
             setItems(data.data.payload)
         }
         catch(error) {
-
+            if(error.response.status === 401) {
+                localStorage.removeItem("token")
+                cookie.remove("access_token_cookie")
+                nav("/signin")
+            }
         }
     }
+    console.log(items);
 
     useEffect(() => {
+
         fetchLabel()
     }, [])
 
@@ -38,10 +46,12 @@ const Home = () => {
         console.log(newItems)
     }
 
+    
+    
     return(
         <>
             <DndProvider backend={HTML5Backend}>
-                <Board onDrop={handleDrop}>
+                <Board update={fetchLabel} item={items} onDrop={handleDrop}>
                     {
                         items.map((item) => (
                             <Label key={item.id} item={item} id={item.id}/>
