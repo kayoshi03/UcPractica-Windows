@@ -18,7 +18,11 @@ const Label = ({item, id}) => {
     
     const fetch = async () => {
         try{
+<<<<<<< HEAD
+           const icon = await API.get(`http://0.0.0.0:8080/icon?application_id=${id}`, {
+=======
            const icon = await API.get(`${process.env.REACT_APP_API_KEY}/icon?application_id=${id}`, {
+>>>>>>> main
             headers: {
                 Authorization: `Bearer ${Cookies.get("access_token_cookie")}`
             }
@@ -48,7 +52,11 @@ const Label = ({item, id}) => {
     return(
         <>
             <Link ref={drag} target="_blank" to={item.url} className={`label my-anchor-element${item.id}`}>
+<<<<<<< HEAD
+                <img src={error ? astda : `http://0.0.0.0:8080/icon?application_id=${id}`} alt=""/>
+=======
                 <img src={error ? astda : `${process.env.REACT_APP_API_KEY}/icon?application_id=${id}`} alt=""/>
+>>>>>>> main
                 <p>{item.name}</p>
             </Link>
             <Tooltip anchorSelect={`.my-anchor-element${item.id}`}>
