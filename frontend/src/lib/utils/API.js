@@ -8,7 +8,7 @@ export const is_auth = () => {
 }
 
 export const API = axios.create({
-    baseURL: "http://31.129.105.229:8080",
+    baseURL: "http://31.129.99.15:8080",
     headers: {
         Authorization: `Bearer ${cookie.get("access_token_cookie")}`,
         "Access-Control-Allow-Origin" : "*"
