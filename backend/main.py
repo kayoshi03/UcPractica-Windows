@@ -1,6 +1,8 @@
 import io
+import logging
 import os
 
+import requests
 from PIL import Image
 from fastapi import FastAPI, Depends, status, UploadFile
 from starlette.middleware.cors import CORSMiddleware
@@ -204,13 +206,5 @@ def get_achievements(url: str):
         Запрос серверу на получение достижений.
         Возможные достижения: https://github.com/kayoshi03/UcPractica-Windows/blob/main/README.md
     """
-    return DefaultResponse()
-
-
-@app.get("/labels")
-def labels():
-    """
-        Маршрут предназначен для возврата labels приложения.
-        Возможные лейблы: https://github.com/kayoshi03/UcPractica-Windows/blob/main/Label.md
-    """
-    return DefaultResponse()
+    response = requests.get(url, cookies={"handyhosttrial": "yes"}).json()
+    return response.json()

@@ -45,7 +45,6 @@ class Applications(Base):
         return {field.name: getattr(self, field.name) for field in self.__table__.c}
 
 
-
 engine = create_engine("postgresql://postgres:postgres@postgres_base:5432/headbase")
 Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
