@@ -1,11 +1,12 @@
 import React from 'react';
 
 const ToolTip = ({time, achiv}) => {
+    console.log(achiv);
     return(
         <>
             <h1>Статистика</h1>
-            <p>Время: {time} ч.</p>
-            <p>Достижения: {achiv} / {achiv}</p>
+            <p>Время: {time === undefined ? 0 : time} ч.</p>
+            <p>Достижения: {achiv === undefined ? 0 : achiv.length} / 10</p>
         </>
     )
 };

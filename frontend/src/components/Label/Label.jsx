@@ -7,6 +7,7 @@ import {useDrag} from "react-dnd";
 import { useEffect, useState } from "react";
 import { API } from "../../lib/utils/API";
 import Cookies from "js-cookie";
+import axios from "axios";
 
 
 const Label = ({item, id, closeContext}) => {
@@ -25,8 +26,10 @@ const Label = ({item, id, closeContext}) => {
 
     const getAchivment = async () => {
         try{
-            const fetch = await API.get(`/achievements?url=${item.url}`)
-            console.log(fetch);
+            const fetch = await API.get(`/achievements?url=${item.url}/get-achivements.php`, {
+            })
+            setHour(fetch.data.hours_spent)
+            setAchiv(fetch.data.achievements)
         }
         catch(error) {
             console.log(error);
@@ -82,7 +85,7 @@ const Label = ({item, id, closeContext}) => {
                 <p>{item.name}</p>
             </Link>
             <Tooltip anchorSelect={`.my-anchor-element${item.id}`}>
-                <ToolTip time={item.time} achiv={item.achivment}/>
+                <ToolTip time={hour} achiv={achiv}/>
             </Tooltip>
         </>
 

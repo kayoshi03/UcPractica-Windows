@@ -10,6 +10,7 @@ import { useNavigate } from "react-router";
 
 const Home = () => {
     const nav = useNavigate()
+    const [show, setShow] = useState(false)
     const [items, setItems] = useState([])
     const fetchLabel = async () => {
         try {
@@ -46,15 +47,18 @@ const Home = () => {
         console.log(newItems)
     }
 
+    const closeContext = () => {
+        setShow(false)
+    }
     
     
     return(
         <>
             <DndProvider backend={HTML5Backend}>
-                <Board update={fetchLabel} item={items} onDrop={handleDrop}>
+                <Board closeContext={closeContext} setContext={setShow} context={show} update={fetchLabel} item={items} onDrop={handleDrop}>
                     {
                         items.map((item) => (
-                            <Label key={item.id} item={item} id={item.id}/>
+                            <Label closeContext={closeContext} key={item.id} item={item} id={item.id}/>
                         ))
                     }
                 </Board>
