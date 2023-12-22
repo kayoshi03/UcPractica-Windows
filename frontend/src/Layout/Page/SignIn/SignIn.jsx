@@ -25,7 +25,6 @@ const SignIn = ({user, sign}) => {
             nav("/")
         }
     })
-
     return(
         <div className="form">
             <form onSubmit={signIn}>
