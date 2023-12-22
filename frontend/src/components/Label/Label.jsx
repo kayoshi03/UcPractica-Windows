@@ -9,20 +9,34 @@ import { API } from "../../lib/utils/API";
 import Cookies from "js-cookie";
 
 
-const Label = ({item, id}) => {
+const Label = ({item, id, closeContext}) => {
     const [error, setError] = useState(true)
+    const [position, setPosition] = useState({
+        x: "",
+        y: ""
+    })
+    const [show, setShow] = useState(false)
+    const [hour, setHour] = useState()
+    const [achiv, setAchiv] = useState()
     const [, drag] = useDrag({
         type: "div",
         item: {id}
     })
+
+    const getAchivment = async () => {
+        try{
+            const fetch = await API.get(`/achievements?url=${item.url}`)
+            console.log(fetch);
+        }
+        catch(error) {
+            console.log(error);
+        }
+        
+    }
     
     const fetch = async () => {
         try{
-<<<<<<< HEAD
-           const icon = await API.get(`http://0.0.0.0:8080/icon?application_id=${id}`, {
-=======
            const icon = await API.get(`${process.env.REACT_APP_API_KEY}/icon?application_id=${id}`, {
->>>>>>> main
             headers: {
                 Authorization: `Bearer ${Cookies.get("access_token_cookie")}`
             }
@@ -42,21 +56,29 @@ const Label = ({item, id}) => {
         }
         
     }
+    const rightClick = (e) => {
+        e.preventDefault()
+        const x = e.pageX
+        const y = e.pageY
+        setPosition({
+            x: x,
+            y: y
+        })
+        setShow(true)
+    }
+
+    
 
 
 
     useEffect(() => {
         fetch()
-        
+        getAchivment()
     }, [])
     return(
         <>
-            <Link ref={drag} target="_blank" to={item.url} className={`label my-anchor-element${item.id}`}>
-<<<<<<< HEAD
-                <img src={error ? astda : `http://0.0.0.0:8080/icon?application_id=${id}`} alt=""/>
-=======
+            <Link onContextMenu={rightClick} ref={drag} target="_blank" to={item.url} className={`label my-anchor-element${item.id}`}>
                 <img src={error ? astda : `${process.env.REACT_APP_API_KEY}/icon?application_id=${id}`} alt=""/>
->>>>>>> main
                 <p>{item.name}</p>
             </Link>
             <Tooltip anchorSelect={`.my-anchor-element${item.id}`}>
