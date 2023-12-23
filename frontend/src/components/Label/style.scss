@@ -33,3 +33,21 @@
   }
  }
 
+ .oven {
+  p {
+    font-size: 14px;
+    color: #000;
+    height: 100%;
+    padding: 10px;
+  }
+  :hover {
+    background-color: rgb(116, 116, 116);
+  }
+  
+  position: absolute;
+  background-color: gray;
+  border: 2px ridge gray;
+  z-index: 999;
+  cursor: context-menu;
+}
+

@@ -10,6 +10,7 @@ import { useNavigate } from "react-router";
 
 const Home = () => {
     const nav = useNavigate()
+    const [showContext, setShowContext] = useState(false)
     const [show, setShow] = useState(false)
     const [items, setItems] = useState([])
     const fetchLabel = async () => {
@@ -29,7 +30,6 @@ const Home = () => {
             }
         }
     }
-    console.log(items);
 
     useEffect(() => {
 
@@ -37,18 +37,16 @@ const Home = () => {
     }, [])
 
     const handleDrop = (id) => {
-        console.log("ok")
         const newItems = [...items];
         const itemIndex = newItems.findIndex((item) => item.id === id)
         const item = newItems[itemIndex]
         newItems.splice(itemIndex, 1)
         newItems.unshift(item)
         setItems(newItems)
-        console.log(newItems)
     }
 
-    const closeContext = () => {
-        setShow(false)
+    const closeContext = (set) => {
+        set(false)
     }
     
     
@@ -58,7 +56,7 @@ const Home = () => {
                 <Board closeContext={closeContext} setContext={setShow} context={show} update={fetchLabel} item={items} onDrop={handleDrop}>
                     {
                         items.map((item) => (
-                            <Label closeContext={closeContext} key={item.id} item={item} id={item.id}/>
+                            <Label update={fetchLabel} closeContext={closeContext} key={item.id} item={item} id={item.id}/>
                         ))
                     }
                 </Board>

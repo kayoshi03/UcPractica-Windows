@@ -1,29 +1,37 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./style.scss"
 import {useDrop} from "react-dnd";
 import Modal from "../Modal/Modal";
+import ContextMenu from "../ContextMenu/ContextMenu";
 
 const Board = ({onDrop, children, item, update, closeContext, context, setContext}) => {
     const [,drop] = useDrop({
         accept: "div",
         drop: (item) => onDrop(item.id)
     })
+
     const [showModal, setShowModal] = useState(false)
     const [position, setPosition] = useState({
         x: "",
         y: ""
     })
 
-
     const rightClick = (e) => {
         e.preventDefault()
-        const x = e.pageX
-        const y = e.pageY
-        setPosition({
-            x: x,
-            y: y
-        })
-        setContext(true)
+        console.log(e.target.parentElement);
+        if(e.target.parentElement.classList[0] === "label") {
+            return 0
+        }
+        else {
+           const x = e.pageX
+            const y = e.pageY
+            setPosition({
+                x: x,
+                y: y
+            })
+            setContext(true) 
+        }
+        
     }
 
     const closeModal = () => {
@@ -35,16 +43,14 @@ const Board = ({onDrop, children, item, update, closeContext, context, setContex
     } 
 
     return(
-        <div onClick={() => closeContext()} onContextMenu={rightClick} className="window" ref={drop}>
+        <div onClick={() => closeContext(setContext)} onContextMenu={rightClick} className="window" ref={drop}>
             {children}
-            {
-                context ? 
-                <div className="rigth" style={{top: position.y + "px", left: position.x + "px"}}>
-                    <p onClick={onClickNAV}>Добавить ярлык</p>
+            
+            <ContextMenu show={context}>
+                <div onClick={onClickNAV} className="rigth" style={{top: position.y + "px", left: position.x + "px"}}>
+                    <p >Добавить ярлык</p>
                 </div>
-                : 
-                <></>
-            }
+            </ContextMenu>
             {
                 showModal ?
                 (

@@ -1,7 +1,6 @@
 import React from 'react';
 
 const ToolTip = ({time, achiv}) => {
-    console.log(achiv);
     return(
         <>
             <h1>Статистика</h1>

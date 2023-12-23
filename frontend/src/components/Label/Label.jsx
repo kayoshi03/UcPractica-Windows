@@ -8,14 +8,17 @@ import { useEffect, useState } from "react";
 import { API } from "../../lib/utils/API";
 import Cookies from "js-cookie";
 import axios from "axios";
+import Modal from "../Modal/Modal";
+import Edit from "../Edit/Edit";
 
 
-const Label = ({item, id, closeContext}) => {
+const Label = ({item, id, update}) => {
     const [error, setError] = useState(true)
     const [position, setPosition] = useState({
         x: "",
         y: ""
     })
+    const [showModal, setShowModal] = useState(false)
     const [show, setShow] = useState(false)
     const [hour, setHour] = useState()
     const [achiv, setAchiv] = useState()
@@ -70,9 +73,31 @@ const Label = ({item, id, closeContext}) => {
         setShow(true)
     }
 
-    
+    const closeContext = (e) => {
+            setShow(false)
+    }
+    const clicdf = () => {
+        setShowModal(true)
+        setShow(false)
 
+    }
+    const closeModal = () => {
+        setShowModal(!showModal)
+    }
+    const editName = () => {
 
+    }
+
+    const deleteLabel = async() => {
+        try {
+            const log = await API.delete(`/application?application_id=${item.id}`)
+            console.log(log)
+            update()
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
         fetch()
@@ -80,10 +105,26 @@ const Label = ({item, id, closeContext}) => {
     }, [])
     return(
         <>
-            <Link onContextMenu={rightClick} ref={drag} target="_blank" to={item.url} className={`label my-anchor-element${item.id}`}>
+            <Link onClick={closeContext}  onContextMenu={rightClick} ref={drag} target="_blank" to={item.url} className={`label my-anchor-element${item.id}`}>
                 <img src={error ? astda : `${process.env.REACT_APP_API_KEY}/icon?application_id=${id}`} alt=""/>
                 <p>{item.name}</p>
             </Link>
+            {
+                show ? 
+                <div onBlur={closeContext}  className="oven" style={{top: position.y + "px", left: position.x + "px"}}>
+                    <p onClick={clicdf}>Переименовать</p>
+                    <p onClick={deleteLabel}>Удалить</p>
+                </div>:
+                <></>
+            }
+            {
+                showModal ?
+                (
+                    <Edit url={item.url} id={item.id} update={update} close={closeModal}/>
+                )
+                : 
+                <></>
+            }
             <Tooltip anchorSelect={`.my-anchor-element${item.id}`}>
                 <ToolTip time={hour} achiv={achiv}/>
             </Tooltip>
