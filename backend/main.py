@@ -127,7 +127,9 @@ def login(request: UserAuthRequest, response: Response):
 
 @app.post("/application", response_model=CreateApplicationResponse, tags=["API", "API Приложения"])
 def add_application(request: CreateApplicationRequest, current_user: User = Depends(get_current_user)):
-    """ Добавления приложения на рабочий стол """
+    """
+        Добавления приложения на рабочий стол
+    """
     with SessionManager() as session:
         message, error, application = new_application(session, request, current_user)
         result = ApplicationElement(**application.to_json()) if application else None
@@ -136,30 +138,36 @@ def add_application(request: CreateApplicationRequest, current_user: User = Depe
 
 @app.delete("/application", response_model=DefaultResponse, tags=["API", "API Приложения"])
 def delete_application(application_id: int, current_user: User = Depends(get_current_user)):
-    """ Удаление приложения """
+    """
+        Удаление приложения
+    """
     with SessionManager() as session:
-        if application := session.query(Applications) \
-                .filter(Applications.id == application_id, Applications.user_id == current_user.id).first():
-            session.delete(application)
-            session.commit()
-            return DefaultResponse(message="Приложение удалено")
-        return DefaultResponse(error=True, message="Приложение не найдено или не принадлежит вам")
+        if application := session.query(Applications).filter(Applications.id == application_id).first():
+            if application.user_id == current_user.id or current_user.name == "admin":
+                session.delete(application)
+                session.commit()
+                return DefaultResponse(error=False, message="Приложение удалено")
+            return DefaultResponse(error=True, message="Приложение вам не принадлежит")
+        return DefaultResponse(error=True, message="Приложение не найдено")
 
 
 @app.put("/application", response_model=DefaultResponse, tags=["API", "API Приложения"])
 def update_application(request: CreateApplicationRequest, application_id: int,
                        current_user: User = Depends(get_current_user)):
-    """ Изменение приложения """
+    """
+        Изменение приложения
+    """
     with SessionManager() as session:
-        if application := session.query(Applications) \
-                .filter(Applications.id == application_id, Applications.user_id == current_user.id).first():
-            if request.name is not None:
-                application.name = request.name
-            if request.url is not None:
-                application.url = request.url
-            session.commit()
-            return DefaultResponse(message="Приложение изменено")
-        return DefaultResponse(error=True, message="Приложение не найдено или не принадлежит вам")
+        if application := session.query(Applications).filter(Applications.id == application_id).first():
+            if application.user_id == current_user.id or current_user.name == "admin":
+                if request.name is not None:
+                    application.name = request.name
+                if request.url is not None:
+                    application.url = request.url
+                session.commit()
+                return DefaultResponse(error=False, message="Приложение изменено")
+            return DefaultResponse(error=True, message="Приложение вам не принадлежит")
+        return DefaultResponse(error=True, message="Приложение не найдено")
 
 
 @app.post("/icon", response_model=DefaultResponse, tags=["API", "API Иконки"])
@@ -168,11 +176,13 @@ def add_icon(app_id: int, file: UploadFile = File(...), current_user: User = Dep
         Добавление иконки
     """
     with SessionManager() as session:
-        if session.query(Applications) \
-                .filter(Applications.id == app_id, Applications.user_id == current_user.id).first():
-            message, error, application = upload_photo_process(session, app_id, file, current_user)
-            return DefaultResponse(error=error, message=message, payload=ApplicationElement(**application.to_json()))
-        return DefaultResponse(error=True, message="Приложение не найдено или оно вам не принадлежит")
+        if application := session.query(Applications).filter(Applications.id == app_id).first():
+            if application.user_id == current_user.id or current_user.name == "admin":
+                message, error, application = upload_photo_process(session, app_id, file, current_user)
+                return DefaultResponse(error=error, message=message,
+                                       payload=ApplicationElement(**application.to_json()))
+            return DefaultResponse(error=True, message="Приложение вам не принадлежит")
+        return DefaultResponse(error=True, message="Приложение не найдено")
 
 
 @app.get("/icon", response_model=DefaultResponse, tags=["API", "API Иконки"])
@@ -200,11 +210,34 @@ def get_image(application_id: int):
             return DefaultResponse(error=True, message="Изображение по пользователю не найдено", payload=None)
 
 
+@app.get("/notifications", response_model=DefaultResponse, tags=["API", "API Уведомления"])
+def _get_notifications(current_user: User = Depends(get_current_user)):
+    """ Получение уведомлений """
+    with SessionManager() as session:
+        notifications = get_notifications(session, current_user.id)
+        return DefaultResponse(error=False, message="OK",
+                               payload=[notification.to_json() for notification in notifications])
+
+
+@app.post("/notifications", response_model=DefaultResponse, tags=["API", "API Уведомления"])
+def _read_notifications(notifications: list[int], current_user: User = Depends(get_current_user)):
+    """ Чтение уведомлений """
+    with SessionManager() as session:
+        set_read_notifications(session, notifications)
+        return DefaultResponse(error=False, message="OK")
+
+
 @app.get("/achievements")
-def get_achievements(url: str):
+def get_achievements(url: str, current_user: User = Depends(get_current_user)):
     """
         Запрос серверу на получение достижений.
         Возможные достижения: https://github.com/kayoshi03/UcPractica-Windows/blob/main/README.md
     """
-    response = requests.get(url, cookies={"handyhosttrial": "yes"}).json()
-    return response.json()
+    try:
+        response = requests.get(url, cookies={"handyhosttrial": "yes"}).json()
+        return response
+    except:
+        with SessionManager() as session:
+            add_notification(session, current_user.id, "Не удалось спарсить JSON. "
+                                                       "Проверьте возврат ответа вашим приложением.")
+            return DefaultResponse(error=True, message="Не удалось получить JSON")

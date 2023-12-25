@@ -28,8 +28,7 @@ const SignIn = ({user, sign}) => {
     return(
         <div className="form">
             <form onSubmit={signIn}>
-                <h1>Авторизаци</h1>
-
+                <h1>Авторизация</h1>
                 <div className="login">
                     <p>Логин</p>
                     <input name="name"/>
@@ -37,7 +36,7 @@ const SignIn = ({user, sign}) => {
                     <input type="password" name="pass"/>
                 </div>
                 <button>Зайти</button>
-                <Link to="/signup">Зарегестрироваться</Link>
+                <Link to="/signup">Зарегистрироваться</Link>
             </form>
         </div>
 

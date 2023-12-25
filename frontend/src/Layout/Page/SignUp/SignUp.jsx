@@ -21,14 +21,13 @@ const SignUp = ({user, sign}) => {
         <div className="form">
             <form onSubmit={signUp}>
                 <h1>Регистрация</h1>
-
                 <div className="login">
                     <p>Логин</p>
                     <input name="name"/>
                     <p>Пароль</p>
                     <input type="password" name="pass"/>
                 </div>
-                <button>Зайти</button>
+                <button>Зарегистрироваться</button>
                 <Link to="/signin">Авторизоваться</Link>
             </form>
         </div>
