@@ -142,12 +142,11 @@ def delete_application(application_id: int, current_user: User = Depends(get_cur
         Удаление приложения
     """
     with SessionManager() as session:
-        if application := session.query(Applications).filter(Applications.id == application_id).first():
-            if application.user_id == current_user.id or current_user.name == "admin":
-                session.delete(application)
-                session.commit()
-                return DefaultResponse(error=False, message="Приложение удалено")
-            return DefaultResponse(error=True, message="Приложение вам не принадлежит")
+        if application := session.query(Applications).filter(Applications.id == application_id,
+                                                             Applications.user_id == current_user.id).first():
+            session.delete(application)
+            session.commit()
+            return DefaultResponse(error=False, message="Приложение удалено")
         return DefaultResponse(error=True, message="Приложение не найдено")
 
 
@@ -158,16 +157,15 @@ def update_application(request: CreateApplicationRequest, application_id: int,
         Изменение приложения
     """
     with SessionManager() as session:
-        if application := session.query(Applications).filter(Applications.id == application_id).first():
-            if application.user_id == current_user.id or current_user.name == "admin":
-                if request.name is not None:
-                    application.name = request.name
-                if request.url is not None:
-                    application.url = request.url
-                session.commit()
-                return DefaultResponse(error=False, message="Приложение изменено")
-            return DefaultResponse(error=True, message="Приложение вам не принадлежит")
-        return DefaultResponse(error=True, message="Приложение не найдено")
+        if application := session.query(Applications).filter(Applications.id == application_id,
+                                                             Applications.user_id == current_user.id).first():
+            if request.name is not None:
+                application.name = request.name
+            if request.url is not None:
+                application.url = request.url
+            session.commit()
+            return DefaultResponse(error=False, message="Приложение изменено")
+        return DefaultResponse(error=True, message="Приложение не найдено или вам не принадлежит")
 
 
 @app.post("/icon", response_model=DefaultResponse, tags=["API", "API Иконки"])
@@ -176,13 +174,12 @@ def add_icon(app_id: int, file: UploadFile = File(...), current_user: User = Dep
         Добавление иконки
     """
     with SessionManager() as session:
-        if application := session.query(Applications).filter(Applications.id == app_id).first():
-            if application.user_id == current_user.id or current_user.name == "admin":
-                message, error, application = upload_photo_process(session, app_id, file, current_user)
-                return DefaultResponse(error=error, message=message,
-                                       payload=ApplicationElement(**application.to_json()))
-            return DefaultResponse(error=True, message="Приложение вам не принадлежит")
-        return DefaultResponse(error=True, message="Приложение не найдено")
+        if application := session.query(Applications).filter(Applications.id == app_id,
+                                                             Applications.user_id == current_user.id).first():
+            message, error, application = upload_photo_process(session, app_id, file, current_user)
+            return DefaultResponse(error=error, message=message,
+                                   payload=ApplicationElement(**application.to_json()))
+        return DefaultResponse(error=True, message="Приложение не найдено или вам не принадлежит")
 
 
 @app.get("/icon", response_model=DefaultResponse, tags=["API", "API Иконки"])
